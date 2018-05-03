@@ -16,3 +16,6 @@ An anonymous function syntax
 
 Shen inspired, parse based function constructor
 
+## arity.red
+
+Contains several arity related functions, by @greggirwin @hiiamboris @rebolek
