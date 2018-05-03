@@ -1,21 +1,21 @@
 # Red Toolbox
 
-## utils.red
+## utils
 
 Contains base utilities like `map` `foldl` `apply`  `->` etc...
 
-## walk.red
+## walk
 
 A straight port of clojure.walk
 
-## lambda.red
+## lambda
 
 An anonymous function syntax
 
-## pfn.red 
+## pfn 
 
 Shen inspired, parse based function constructor
 
-## arity.red
+## arity
 
 Contains several arity related functions, by @greggirwin @hiiamboris @rebolek
