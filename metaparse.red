@@ -82,6 +82,10 @@ rules: [rule '| rules | some rule]
 
 ;; tests -----------------------------------------------------
 
+throw: func [s][
+    cause-error 'user 'message [s]
+]
+
 test: func [s /invalid][
     r: parse s rules
     either invalid[

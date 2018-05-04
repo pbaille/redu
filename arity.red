@@ -71,10 +71,11 @@ arity?: function [p [word! path!]] [
 
 ;; me :)
 arity??: function [x][
-    print "arity??:" ?? x
     valid: all [value? x find [word! path!] type?/word x]
     either valid [arity? x][0]
 ]
+
+arity?? 'append
 
 ;; ---------------------------------------------------------------
 ;; https://github.com/rebolek/red-tools/blob/master/func-tools.red
