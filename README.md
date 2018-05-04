@@ -19,3 +19,7 @@ Shen inspired, parse based function constructor
 ## arity
 
 Contains several arity related functions, by @greggirwin @hiiamboris @rebolek
+
+## metaparse
+
+A rule for parse rules
