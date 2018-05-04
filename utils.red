@@ -10,7 +10,7 @@ Red [
 ;; errors -------------------------------------------
 
 throw: func [s][
-    cause-error 'script 'expect-arg [form s]
+    cause-error 'user 'message [mold s]
 ]
 
 assert: func [b s][if not b [throw s]]
@@ -19,7 +19,7 @@ assert: func [b s][if not b [throw s]]
 
 ;; deps --------------------------------------------
 
-import: fn [file /as ns /refer ws] [
+import: function [file /as ns /refer ws] [
     m: context load file
     case [
         all [ns ws] [set ns import/refer ws]
@@ -215,6 +215,20 @@ inject: fn [s f /if is-node?][
     ]
 ]
 
+;; a bit obscur... experimental
+traverse: func [x f][
+    until [
+        either series? x/1 [
+            x/1: traverse x/1 :f
+            x: next x
+        ][f x]
+        tail? x 
+    ]
+    head x
+]
+
+rappend: func [xs] [foldl xs :append]
+
 [
     find-where [1 2 -1] :neg?
     find-where [1 2 3] :neg?
@@ -230,7 +244,10 @@ inject: fn [s f /if is-node?][
     partition/step x 3 1
 
     inject [1 [2 [3]]] :inc
-    
+
+    y: [a b [f g h] c]
+    traverse y func ['x] [set x next get x]
+
 ]
 
 ;; code manipulation -------------------------------
