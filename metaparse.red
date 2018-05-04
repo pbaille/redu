@@ -3,12 +3,9 @@ Red [
 ]
 
 rule: [
-
-    ;; rule can be a block
-    m: if (block? m/1) into rules
-
-    ;; red expression are skipped 
-    | paren! skip
+    m:
+    block! :m into rules
+    | paren!
 
     ;; special words ---------------------------------------
 
@@ -41,9 +38,9 @@ rule: [
 
     ;;Extraction
 
-    | 'collect into rule	
-    | 'collect 'set word! into rule	
-    | 'collect 'into word! into rule	
+    | 'collect into rules	
+    | 'collect 'set word! into rules	
+    | 'collect 'into word! into rules	
     | 'copy word! rule	
     | 'keep rule	
     | 'keep paren!	
@@ -73,42 +70,51 @@ rule: [
     | if (all [
             word? m/1
             value? m/1
-            parse append copy [] get m/1 rules
-        ]) skip
+            m/1: get m/1
+        ]) into rule
     
 ]
 
-rules: [rule '| rules | some rule]
+rules: [rule '| rules | rule [end | rules]]
 
 ;; tests -----------------------------------------------------
 
-throw: func [s][
-    cause-error 'user 'message [s]
+throw: func [b][
+    cause-error 'user 'message [reduce b]
 ]
 
 test: func [s /invalid][
     r: parse s rules
     either invalid[
-        if r [throw append copy "should be invalid: " mold s]
-    ][if not r [throw append copy "should be valid: " mold s]]
+        if r [throw ['should-be-invalid s]]
+    ][if not r [throw ['should-be-valid s]]]
 ]
 
 tests: func [xs /invalid] [
     foreach x xs [
-        either invalid [
-            test/invalid x
-        ][test x]
-    ]
+        either invalid [test/invalid x][test x]]
 ]
 
 digit: charset "123"
 
 tests [
     [string!]
+    [(a b c)]
     [a:]
     [:a]
     [#"a"]
+    ["foo"]
+    ['foo]
     [digit]
+    ['a 'b 'c]
+    ['a | string! digit]
+    [1 string!]
+    [3 5 'a]
+    [digit ['a :z | 3 string!]]
+    [[['a]]]
+    [[digit] | string!]
+    [ahead 2 3 ['a | digit]]
+    [none end]
     ["aze" ["baz" | "ert"] digit]
     [a: integer! (a b c) 2 3 [word! | path!]]
     [(print "a") integer!]
@@ -122,10 +128,12 @@ tests [
 ]
 
 tests/invalid [
-    [(print a)]
+    ;[(print a)]
     [1]
     [1 2 3 string!]
     [pouet integer!]
     [a b c]
 ]
 
+parse [1 1 1 1] [1 2 3 4 integer!]
+parse [2 2 "a" "a"] [2 [1 3 [string! | integer!]]]
