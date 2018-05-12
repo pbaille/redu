@@ -187,19 +187,17 @@ parse+: func [x rules][
 
 ;; ----------------------------------------------------------
 
-init: func [
+compile-binding-rule: func [
     "turn a binding rule into native parse rule"
     word
     rule
 ][
     compose/only [
-        init-mark:
+        cbr_:
         if (to-paren compose [not value? quote (word)]
         ) (compose/only [set (word) (rule) | break])
-        | if (to-paren compose [equal? get quote (word) init-mark/1]
-        ) (rule)
-    ]
-]
+        | if (to-paren compose [equal? get quote (word) cbr_/1]
+        ) (rule)]]
 
 upperchar: charset [#"A" - #"Z"]
 
@@ -208,10 +206,12 @@ uppercase: [_: if (parse to-string _ [upperchar to end]) skip]
 binding-var: [ahead word! uppercase]
 
 binding-rule: [
-    ahead [set b1 binding-var set r1 rule]
-    remove 2 skip insert only (init b1 r1)
-    | ahead set b2 binding-var remove skip insert only (init b2 'any-type!)
-    | ahead set r3 rule remove skip insert only (init u/gensym r3)]
+    ahead [set b1 binding-var set r1 rule] remove 2 skip
+      insert only (compile-binding-rule b1 r1)
+    | ahead set b2 binding-var remove skip
+      insert only (compile-binding-rule b2 'any-type!)
+    | ahead set r3 rule remove skip
+      insert only (compile-binding-rule u/gensym r3)]
 
 binding-cons: [
     ahead block!
@@ -220,7 +220,7 @@ binding-cons: [
         some binding-rule
         remove '.
         ahead set restsym binding-var remove skip
-        insert only (init restsym [to end])]]
+        insert only (compile-binding-rule restsym [to end])]]
 
 args-parser: function[input-rules][
 
