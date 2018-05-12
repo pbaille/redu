@@ -37,6 +37,13 @@ gensym: func [/with 'word /reset /local count][
     to word! rejoin [any [word 'g] count/1]
 ]
 
+?value: func[x][
+    all [
+        value? x
+        get either set-word? x [to-word x][x]
+    ]
+]
+
 ;; aliases -----------------------------------------
 
 fn: :function
@@ -221,11 +228,13 @@ traverse: func [x f][
         either series? x/1 [
             x/1: traverse x/1 :f
             x: next x
-        ][f x]
-        tail? x 
+        ][x: f x]
+        tail? x
     ]
     head x
 ]
+;traverse [a b c [d e] f] func['x][set x next get x] ;ok return the same series
+;traverse [a b c [d e] f] func[x][x: next x] ;loop forever
 
 rappend: func [xs] [foldl xs :append]
 

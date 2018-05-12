@@ -65,7 +65,11 @@ mywalk: func [
     :word?
     fn[x][either x = '_  ['op] [x]]
     :series?
+
     :id
+    'ze
 ]
+
+'aze
 
 print "walk.red loaded"
