@@ -71,6 +71,7 @@ arity?: function [p [word! path!]] [
 
 ;; me :)
 arity??: function [x][
+    ;print ["arity??" x type?/word x]
     valid: all [value? x find [word! path!] type?/word x]
     either valid [arity? x][0]
 ]
