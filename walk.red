@@ -37,7 +37,50 @@ postwalk-replace: fn [x smap][
 
 [
     id: fn[x][x]
-    walk [1 [2 [3]] 4] fn[x][any [all [number? x inc x] x]] :id
+    walk [1 [2 [3]] 4] fn[x]Red []
+
+u: context load %utils.red
+
+;; @dockimbel
+λc: func [
+    vars [block!]
+    spec [block!] 
+    body [block!] 
+][
+    func spec bind body context vars
+]
+
+λw: func [
+    words [block!]
+    spec [block!] 
+    body [block!] 
+][
+    ctx: copy []
+    foreach w words [
+        append ctx compose [
+            (to-set-word w)
+            (all [value? w v: get w
+                  either function? :v [quote :v][v]])
+        ]
+    ]
+    func spec bind body context ctx
+]
+
+context [
+
+    fn: :function
+
+    a: 10
+    f: λw[a][c][c + a]
+    f1: f 1
+
+    g: fn [x][x + 1]
+    h: λw[g][x][g x]
+    h1: h 1
+
+]
+
+[any [all [number? x inc x] x]] :id
     prewalk-demo [1 2 [3 4 [5 6] 7] 8 [9]]
     postwalk-demo [1 2 [3 4 [5 6] 7] 8 [9]]
     prewalk-replace [_1 + _3 - 34  [_2 + _3] 12] #(_1 one _2 two _3 three)
@@ -69,7 +112,3 @@ mywalk: func [
     :id
     'ze
 ]
-
-'aze
-
-print "walk.red loaded"
